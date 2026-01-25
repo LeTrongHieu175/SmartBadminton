@@ -9,13 +9,16 @@ import {
   findUserByEmail,
   findUserByPhone,
   findUserByUsername,
+  createLoginAudit,
   createUserWithRelations,
 } from '../repositories/user.repository';
-import { hashPassword } from '../../../shared/hash';
+import prisma from '../../../shared/prisma';
+import { hashPassword, verifyPassword } from '../../../shared/hash';
 import {
   signAccessToken,
   signRefreshToken,
 } from '../../../shared/jwt';
+import { LoginInput } from '../validators/login.validator';
 import { RegisterInput } from '../validators/register.validator';
 import logger from '../../../shared/logger';
 import {
@@ -51,6 +54,13 @@ const ttlToMs = (ttl: string): number => {
   return value * map[unit];
 };
 
+const maskUsername = (value: string): string => {
+  if (value.length <= 2) {
+    return '*'.repeat(value.length);
+  }
+  return `${value.slice(0, 2)}***`;
+};
+
 export type RegisterContext = {
   ipAddress?: string;
   userAgent?: string;
@@ -58,6 +68,27 @@ export type RegisterContext = {
 };
 
 type RegisterResult = {
+  user: {
+    id: string;
+    username: string;
+    fullName: string;
+    phone: string;
+    email: string;
+    role: Role;
+  };
+  tokens: {
+    accessToken: string;
+    refreshToken: string;
+  };
+};
+
+export type LoginContext = {
+  ipAddress?: string;
+  userAgent?: string;
+  deviceInfo?: string;
+};
+
+type LoginResult = {
   user: {
     id: string;
     username: string;
@@ -169,4 +200,115 @@ export const registerUser = async (
     endTimer();
     throw error;
   }
+};
+
+const buildInvalidUsernameError = (): ServiceError =>
+  new ServiceError(
+    'USERNAME_NOT_FOUND',
+    401,
+    'Ten dang nhap khong chinh xac! Vui long nhap lai.',
+  );
+
+const buildInvalidPasswordError = (): ServiceError =>
+  new ServiceError(
+    'PASSWORD_INCORRECT',
+    401,
+    'Mat khau khong chinh xac! Vui long nhap lai.',
+  );
+
+export const loginUser = async (
+  payload: LoginInput,
+  context: LoginContext = {},
+): Promise<LoginResult> => {
+  const maskedUsername = maskUsername(payload.username);
+  logger.info(
+    { username: maskedUsername, ipAddress: context.ipAddress },
+    'login attempt',
+  );
+  const user = await findUserByUsername(payload.username);
+
+  const recordFailedLogin = async () => {
+    await createLoginAudit({
+      action: AuditAction.LOGIN,
+      status: AuditStatus.FAILED,
+      reason: 'INVALID_CREDENTIALS',
+      ipAddress: context.ipAddress ?? null,
+      userAgent: context.userAgent ?? null,
+      ...(user
+        ? { user: { connect: { id: user.id } } }
+        : {}),
+    });
+  };
+
+  if (!user) {
+    await recordFailedLogin();
+    logger.warn(
+      { username: maskedUsername, ipAddress: context.ipAddress },
+      'login failed: invalid credentials',
+    );
+    throw buildInvalidUsernameError();
+  }
+
+  const isValidPassword = await verifyPassword(
+    payload.password,
+    user.passwordHash,
+  );
+  if (!isValidPassword) {
+    await recordFailedLogin();
+    logger.warn(
+      { userId: user.id, username: maskedUsername, ipAddress: context.ipAddress },
+      'login failed: invalid credentials',
+    );
+    throw buildInvalidPasswordError();
+  }
+
+  const [accessToken, refreshToken] = await Promise.all([
+    signAccessToken({ sub: user.username, role: user.role }),
+    signRefreshToken({ sub: user.username, role: user.role }),
+  ]);
+  const refreshTokenHash = await hashPassword(refreshToken);
+  const refreshExpiresAt = new Date(
+    Date.now() + ttlToMs(config.jwt.refresh.ttl),
+  );
+
+  await prisma.$transaction(async (tx) => {
+    await tx.refreshToken.create({
+      data: {
+        tokenHash: refreshTokenHash,
+        expiresAt: refreshExpiresAt,
+        deviceInfo: context.deviceInfo ?? null,
+        ipAddress: context.ipAddress ?? null,
+        userId: user.id,
+      },
+    });
+    await tx.loginAudit.create({
+      data: {
+        action: AuditAction.LOGIN,
+        status: AuditStatus.SUCCESS,
+        ipAddress: context.ipAddress ?? null,
+        userAgent: context.userAgent ?? null,
+        userId: user.id,
+      },
+    });
+  });
+
+  logger.info(
+    { userId: user.id, username: maskedUsername },
+    'login success',
+  );
+
+  return {
+    user: {
+      id: user.id,
+      username: user.username,
+      fullName: user.fullName,
+      phone: user.phone,
+      email: user.email,
+      role: user.role,
+    },
+    tokens: {
+      accessToken,
+      refreshToken,
+    },
+  };
 };

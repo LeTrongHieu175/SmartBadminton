@@ -52,6 +52,7 @@ model LoginAudit {
 
 enum AuditAction {
   REGISTER
+  LOGIN
 }
 
 enum AuditStatus {

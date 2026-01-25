@@ -5,5 +5,5 @@ backend/keys/
 node_modules/
 package-lock.json
 migrations/
-rule/
-CONTINUITY.md
+# rule/
+# CONTINUITY.md
