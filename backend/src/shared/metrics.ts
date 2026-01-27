@@ -40,5 +40,24 @@ export const loginDurationHistogram = new Histogram({
   registers: [metricsRegistry],
 });
 
+export const availableCourtsSearchCounter = new Counter({
+  name: 'courts_available_search_total',
+  help: 'Total available courts searches',
+  registers: [metricsRegistry],
+});
+
+export const availableCourtsEmptyCounter = new Counter({
+  name: 'courts_available_empty_total',
+  help: 'Total available courts searches with empty result',
+  registers: [metricsRegistry],
+});
+
+export const availableCourtsDurationHistogram = new Histogram({
+  name: 'courts_available_duration_ms',
+  help: 'Available courts search latency (milliseconds)',
+  buckets: [50, 100, 200, 400, 800, 1600, 3200],
+  registers: [metricsRegistry],
+});
+
 export const getMetricsSnapshot = (): Promise<string> =>
   metricsRegistry.metrics();

@@ -2,6 +2,7 @@ import express from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 import authRouter from "./routes/auth.routes";
+import courtRouter from "./routes/court.routes";
 import { responseMiddleware } from "./shared/response";
 import config from "./config/env";
 import prisma from "./shared/prisma";
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use(responseMiddleware);
 
 app.use("/api/auth", authRouter);
+app.use("/api/courts", courtRouter);
 
 const port = config.port;
 

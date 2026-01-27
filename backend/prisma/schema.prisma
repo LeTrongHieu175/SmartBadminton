@@ -12,6 +12,41 @@ enum Role {
   OWNER
 }
 
+enum CourtType {
+  SINGLE
+  DOUBLE
+}
+
+enum BookingStatus {
+  PENDING_PAYMENT
+  PAID
+  CANCELLED
+}
+
+model Court {
+  id        String    @id @default(uuid())
+  name      String
+  type      CourtType
+  basePrice Int
+  isActive  Boolean   @default(true)
+  bookings  Booking[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+model Booking {
+  id        String        @id @default(uuid())
+  court     Court         @relation(fields: [courtId], references: [id])
+  courtId   String
+  startTime DateTime
+  endTime   DateTime
+  status    BookingStatus
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  @@index([courtId, startTime, endTime, status])
+}
+
 model User {
   id           String   @id @default(uuid())
   username     String   @unique
