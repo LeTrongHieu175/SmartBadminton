@@ -8,6 +8,7 @@ Constraints/Assumptions:
 - Work exclusively within `C:\Users\yasuo\Desktop\SmartBadminton` workspace.
 - Replies must be in Vietnamese.
 - Do not run DB/migration/server commands autonomously; request user execution when needed.
+- When user provides the Implementation/Task/TDD structure from rule, that is approval to proceed.
 
 Key decisions:
 - Ledger/rule compliance established; registration TDD + task breakdown completed.
@@ -44,13 +45,52 @@ State:
     - Added DB connection check on server start in `backend/src/app.ts` with success/failure logging.
     - Read `docs/CNM.pdf` spec and reviewed registration API for alignment.
     - Updated login validation to require non-empty fields and adjusted login errors to match spec messages.
+    - Drafted TDD for available courts at `TDD/available-courts-tdd.md` based on `docs/CNM.pdf`.
+    - Added codebase alignment section to `TDD/available-courts-tdd.md`.
+    - Created detailed task breakdown at `task/available-courts-task-breakdown.md` from the available-courts TDD.
+    - Completed Task 1: added `CourtType` enum to `backend/prisma/schema.prisma`.
+    - Completed Task 2: added `BookingStatus` enum to `backend/prisma/schema.prisma`.
+    - Completed Task 3: added `Court` model to `backend/prisma/schema.prisma`.
+    - Completed Task 4: added `Booking` model and relation to `Court` in `backend/prisma/schema.prisma`.
+    - Chose Option A: `Booking` keeps `startTime`/`endTime` as `DateTime` and removes `date`.
+    - Completed Task 5: added booking availability index on (`courtId`, `startTime`, `endTime`, `status`).
+    - Completed Task 8: created `backend/src/routes/court.routes.ts`.
+    - Completed Task 9: registered `/api/courts` routes in `backend/src/app.ts`.
+    - Completed Task 10: added auth middleware in `backend/src/middleware/auth.ts`.
+    - Completed Task 11: added role-based middleware helper in `backend/src/middleware/auth.ts`.
+    - Completed Task 12: added `available-courts.validator.ts` for query validation.
+    - Completed Task 13: date format validation included in available courts validator.
+    - Completed Task 14: time format validation included in available courts validator.
+    - Completed Task 15: startTime < endTime validation included in available courts validator.
+    - Completed Task 16: operating hours validation (06:00-23:00) included in available courts validator.
+    - Completed Task 17: created `backend/src/modules/courts/repositories/court.repository.ts`.
+    - Completed Task 18: availability query implemented in court repository.
+    - Completed Task 19: overlap logic uses `startTime < end` and `endTime > start`.
+    - Completed Task 20: created `backend/src/modules/courts/services/available-courts.service.ts`.
+    - Completed Task 21: durationMinutes computed in available courts service.
+    - Completed Task 22: NO_AVAILABLE_COURTS error thrown when no results.
+    - Completed Task 23: created `backend/src/modules/courts/controllers/court.controller.ts`.
+    - Completed Task 24: handler uses `responseMiddleware` in courts controller.
+    - Completed Task 25: validation and service error mapping handled in courts controller.
+    - Completed Task 26: wired `/api/courts/available` with auth + role in `court.routes.ts`.
+    - Completed Task 27: added structured logs for available courts search and results.
+    - Completed Task 28: added available courts metrics and wired service timings/counters.
+    - Completed Task 37: added OpenAPI spec for courts at `docs/api/courts.yaml`.
+    - Completed Task 38: added error examples (400/401/403/404) in `docs/api/courts.yaml`.
+    - Completed Task 39: updated `docs/ops.md` with available courts logs/metrics.
+    - Completed Task 40: updated TDD with p95 target (300ms) and confirmed blocking statuses.
+    - Added seed script for `Court`/`Booking` at `backend/prisma/seed.ts` and wired `prisma:seed` in `backend/package.json`.
+    - Created backend Dockerfile at `infra/Docker/Dockerfile.BE`.
+    - Added bind mount for backend in `infra/docker-compose.yml`.
+    - Removed bind mount entries from `infra/docker-compose.yml` per user request.
+    - Updated `project_overview.md` to match latest codebase per `project-overview-rule.mdc`.
   - Now:
-    - Ready for Task 22 (unit test for login happy path).
+    - Ready for remaining tests or any follow-up tasks.
   - Next:
-    - Implement Task 22 after confirmation.
+    - Proceed with remaining tasks you request.
 
 Open questions (`UNCONFIRMED` if needed):
-- User asked what inputs are needed to write a proper TDD for “Xem danh sách sân trống”.
+- None.
 
 Working set (files/ids/commands):
 - `rule/continuity-ledger-rule.mdc`

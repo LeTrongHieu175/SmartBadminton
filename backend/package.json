@@ -11,11 +11,15 @@
     "prisma:generate": "prisma generate",
     "dev": "ts-node src/app.ts",
     "prisma:migrate": "prisma migrate dev --name init",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "prisma:seed": "ts-node prisma/seed.ts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "prisma": {
+    "seed": "ts-node prisma/seed.ts"
+  },
   "devDependencies": {
     "@types/helmet": "^0.0.48",
     "@types/morgan": "^1.9.10",

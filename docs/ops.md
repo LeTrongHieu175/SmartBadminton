@@ -10,6 +10,12 @@ eq.ip and rate limiting work correctly.
 - Pino logger is configured to log structured events only. Avoid logging raw request bodies or secrets.
 - When logging identifiers, prefer masked values (e.g., last 4 digits of phone). The current registration flow only logs username, userId, and high-level error codes.
 - Audit entries (login_audit table) already store IP/User-Agent; avoid storing plaintext passwords or tokens.
+- Available courts search logs criteria (date, startTime, endTime) and result count; avoid logging user PII in these events.
+
+## Metrics
+- auth_registration_success_total / auth_registration_failure_total / auth_registration_duration_ms
+- auth_login_success_total / auth_login_failure_total / auth_login_duration_ms
+- courts_available_search_total / courts_available_empty_total / courts_available_duration_ms
 
 ## Refresh Token Storage
 - Refresh tokens are hashed with bcrypt before being stored; never persist plaintext tokens.
