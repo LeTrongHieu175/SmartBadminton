@@ -1,4 +1,4 @@
-import { registerSchema } from '../../src/modules/auth/validators/register.validator';
+import { registerSchema } from '../src/modules/auth/validators/register.validator';
 
 describe('registerSchema', () => {
   it('validates correct payload', () => {

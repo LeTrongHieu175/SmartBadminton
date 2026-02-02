@@ -61,7 +61,7 @@ describe('registerUser', () => {
     mockUserRepo.findUserByUsername.mockResolvedValue(null);
     mockUserRepo.findUserByPhone.mockResolvedValue({ id: 'existing' } as any);
 
-    await expect(registerUser(baseInput)).rejects.toThrow('S? �i?n tho?i �? t?n t?i');
+    await expect(registerUser(baseInput)).rejects.toThrow('Số điện thoại đã tồn tại');
   });
 
   it('throws when email already exists', async () => {
@@ -69,7 +69,7 @@ describe('registerUser', () => {
     mockUserRepo.findUserByPhone.mockResolvedValue(null);
     mockUserRepo.findUserByEmail.mockResolvedValue({ id: 'existing' } as any);
 
-    await expect(registerUser(baseInput)).rejects.toThrow('Email �? t?n t?i');
+    await expect(registerUser(baseInput)).rejects.toThrow('Email đã tồn tại');
   });
 
   it('propagates unexpected errors', async () => {

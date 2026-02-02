@@ -1,17 +1,18 @@
 import request from 'supertest';
 import express from 'express';
-import { matchers } from 'jest-openapi';
-import fs from 'fs';
+import jestOpenAPI from 'jest-openapi';
 import path from 'path';
 import authRouter from '../../src/routes/auth.routes';
 import { responseMiddleware } from '../../src/shared/response';
 import * as userRepo from '../../src/modules/auth/repositories/user.repository';
 
 jest.mock('../../src/modules/auth/repositories/user.repository');
-expect.extend(matchers);
 
 const specPath = path.join(__dirname, '../../../docs/api/auth.yaml');
-const spec = fs.readFileSync(specPath, 'utf-8');
+
+beforeAll(() => {
+  jestOpenAPI(specPath);
+});
 
 const appFactory = () => {
   const app = express();
@@ -38,7 +39,17 @@ describe('API contract for /api/auth/register', () => {
     mockRepo.findUserByPhone.mockResolvedValue(null);
     mockRepo.findUserByEmail.mockResolvedValue(null);
     mockRepo.createUserWithRelations.mockResolvedValue({
-      user: { id: 'user-id', ...payload },
+      user: {
+        id: 'user-id',
+        username: payload.username,
+        fullName: payload.fullName,
+        phone: payload.phone,
+        email: payload.email,
+        role: payload.role as any,
+        passwordHash: 'hashed',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
       refreshToken: {} as any,
     });
   });
@@ -48,7 +59,7 @@ describe('API contract for /api/auth/register', () => {
       .post('/api/auth/register')
       .send(payload);
 
-    expect(res).toSatisfyApiSpec(spec);
+    expect(res).toSatisfyApiSpec();
   });
 
   it('matches OpenAPI error schema', async () => {
@@ -57,6 +68,6 @@ describe('API contract for /api/auth/register', () => {
       .post('/api/auth/register')
       .send(payload);
 
-    expect(res).toSatisfyApiSpec(spec);
+    expect(res).toSatisfyApiSpec();
   });
 });

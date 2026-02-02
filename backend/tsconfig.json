@@ -7,9 +7,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "outDir": "dist",
-    "types": ["node"],
+    "types": ["node", "jest", "jest-openapi"],
     "baseUrl": "."
   },
-  "include": ["src"],
+  "include": ["src", "tests", "prisma"],
   "exclude": ["node_modules", "dist"]
 }

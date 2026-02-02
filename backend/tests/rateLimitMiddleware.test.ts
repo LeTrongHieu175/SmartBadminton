@@ -1,10 +1,11 @@
 import request from 'supertest';
 import express from 'express';
-import { responseMiddleware } from '../../src/shared/response';
-import { rateLimitMiddleware, resetRateLimit } from '../../src/middleware/rateLimit';
+import { responseMiddleware } from '../src/shared/response';
+import { rateLimitMiddleware, resetRateLimit } from '../src/middleware/rateLimit';
 
 const buildApp = () => {
   const app = express();
+  app.set('trust proxy', true);
   app.use(responseMiddleware);
   app.use(rateLimitMiddleware);
   app.get('/', (_req, res) => res.success({ ok: true }));

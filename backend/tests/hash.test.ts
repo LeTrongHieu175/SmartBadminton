@@ -1,4 +1,4 @@
-import { hashPassword, verifyPassword } from '../../src/shared/hash';
+import { hashPassword, verifyPassword } from '../src/shared/hash';
 
 describe('hash utilities', () => {
   it('hashes and verifies passwords', async () => {

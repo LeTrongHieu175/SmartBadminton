@@ -1,4 +1,4 @@
-import { signAccessToken, verifyAccessToken } from '../../src/shared/jwt';
+import { signAccessToken, verifyAccessToken } from '../src/shared/jwt';
 
 describe('jwt utilities', () => {
   it('signs and verifies access tokens', async () => {

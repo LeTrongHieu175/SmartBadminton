@@ -20,6 +20,7 @@ const mockRepo = userRepo as jest.Mocked<typeof userRepo>;
 
 const buildApp = () => {
   const app = express();
+  app.set('trust proxy', true);
   app.use(responseMiddleware);
   app.use(express.json());
   app.use('/api/auth', authRouter);
@@ -48,7 +49,17 @@ describe('POST /api/auth/register integration', () => {
     mockRepo.findUserByPhone.mockResolvedValue(null);
     mockRepo.findUserByEmail.mockResolvedValue(null);
     mockRepo.createUserWithRelations.mockResolvedValue({
-      user: { id: 'user-id', ...payload },
+      user: {
+        id: 'user-id',
+        username: payload.username,
+        fullName: payload.fullName,
+        phone: payload.phone,
+        email: payload.email,
+        role: payload.role as any,
+        passwordHash: 'hashed',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
       refreshToken: {} as any,
     });
 
@@ -114,7 +125,17 @@ describe('POST /api/auth/register integration', () => {
     mockRepo.findUserByPhone.mockResolvedValue(null);
     mockRepo.findUserByEmail.mockResolvedValue(null);
     mockRepo.createUserWithRelations.mockResolvedValue({
-      user: { id: 'user-id', ...payload },
+      user: {
+        id: 'user-id',
+        username: payload.username,
+        fullName: payload.fullName,
+        phone: payload.phone,
+        email: payload.email,
+        role: payload.role as any,
+        passwordHash: 'hashed',
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
       refreshToken: {} as any,
     });
     const app = buildApp();

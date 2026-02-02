@@ -1,6 +1,6 @@
 import request from 'supertest';
 import express from 'express';
-import { responseMiddleware } from '../../src/shared/response';
+import { responseMiddleware } from '../src/shared/response';
 
 const buildApp = () => {
   const app = express();

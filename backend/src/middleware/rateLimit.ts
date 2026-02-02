@@ -23,6 +23,7 @@ export const resetRateLimit = (key: string): void => {
     (store as { resetKey?: (k: string) => void })?.resetKey
   );
   if (typeof reset === 'function') {
-    reset(key);
+    const normalizedKey = ipKeyGenerator(key ?? '');
+    reset(normalizedKey);
   }
 };
