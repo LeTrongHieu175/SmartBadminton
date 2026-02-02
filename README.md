@@ -1,12 +1,12 @@
 # SmartBadminton - Local Development Guide
 
-This guide walks you through running the backend API and Flutter frontend locally, with API base URL configured via `--dart-define`.
+This guide walks you through running the backend API and Flutter frontend locally.
 
 ## Prerequisites
 
 - Node.js + npm
 - PostgreSQL (local or Docker)
-- Flutter SDK
+- Flutter SDK (already installed on this machine)
 
 ## 1) Backend setup
 
@@ -65,40 +65,16 @@ cd frontend
 flutter pub get
 ```
 
-### Configure API base URL (recommended)
-
-We use `--dart-define` so each machine can supply its own backend URL without editing code.
-
-Examples:
-
-- macOS desktop or iOS simulator (backend on the same machine):
-
-```bash
-flutter run --dart-define=API_BASE_URL=http://localhost:3000
-```
-
-- Android emulator (backend on the same machine):
-
-```bash
-flutter run --dart-define=API_BASE_URL=http://10.0.2.2:3000
-```
-
-- Physical device or different machine (replace with your backend IP):
-
-```bash
-flutter run --dart-define=API_BASE_URL=http://192.168.1.10:3000
-```
-
-Notes:
-- Use your machine’s LAN IP if running backend on another computer.
-- Ensure the backend machine allows incoming connections on port 3000.
-- If you change networks or IPs, just re-run `flutter run` with the new URL.
-
 ### Run Flutter app
 
 ```bash
-flutter run --dart-define=API_BASE_URL=http://localhost:3000
+flutter run
+XDG_CONFIG_HOME=/Users/hieutronglee04gmail.com/Documents/HK8/CNM/SmartBadminton/.config flutter run
 ```
+
+When the login screen appears:
+- Use base URL `http://localhost:3000` if running on macOS simulator or desktop.
+- Use `http://10.0.2.2:3000` for Android emulator.
 
 ## 3) Login flow
 
