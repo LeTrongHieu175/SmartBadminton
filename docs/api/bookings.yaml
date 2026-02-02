@@ -1,0 +1,177 @@
+openapi: 3.0.3
+info:
+  title: SmartBadminton Bookings API
+  version: 1.0.0
+paths:
+  /api/bookings:
+    post:
+      summary: Create booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - courtId
+                - startTime
+                - endTime
+              properties:
+                courtId:
+                  type: string
+                  format: uuid
+                startTime:
+                  type: string
+                  format: date-time
+                  example: 2026-01-30T09:00:00.000Z
+                endTime:
+                  type: string
+                  format: date-time
+                  example: 2026-01-30T10:30:00.000Z
+      responses:
+        '201':
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                        format: uuid
+                      courtId:
+                        type: string
+                        format: uuid
+                      userId:
+                        type: string
+                        format: uuid
+                      startTime:
+                        type: string
+                        format: date-time
+                      endTime:
+                        type: string
+                        format: date-time
+                      durationMinutes:
+                        type: integer
+                      unitPrice:
+                        type: integer
+                      totalPrice:
+                        type: integer
+                      status:
+                        type: string
+                        enum:
+                          - PENDING_PAYMENT
+                          - PAID
+                          - CANCELED
+                          - EXPIRED
+                      expiresAt:
+                        type: string
+                        format: date-time
+                      createdAt:
+                        type: string
+                        format: date-time
+                      updatedAt:
+                        type: string
+                        format: date-time
+        '400':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                validationError:
+                  value:
+                    status: error
+                    code: VALIDATION_ERROR
+                    message: Du lieu khong hop le
+        '401':
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  value:
+                    status: error
+                    code: UNAUTHORIZED
+                    message: Chua dang nhap
+        '403':
+          description: Forbidden
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                forbidden:
+                  value:
+                    status: error
+                    code: FORBIDDEN
+                    message: Khong co quyen truy cap
+        '404':
+          description: Court not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                courtNotFound:
+                  value:
+                    status: error
+                    code: COURT_NOT_FOUND
+                    message: San khong ton tai
+        '409':
+          description: Booking overlap
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                bookingOverlap:
+                  value:
+                    status: error
+                    code: BOOKING_OVERLAP
+                    message: San da duoc dat trong khung gio nay
+        '429':
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                rateLimited:
+                  value:
+                    status: error
+                    code: RATE_LIMITED
+                    message: Too many requests, please try again later.
+        '500':
+          description: Server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                internalError:
+                  value:
+                    status: error
+                    code: INTERNAL_ERROR
+                    message: Khong the tao booking
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          example: error
+        code:
+          type: string
+        message:
+          type: string

@@ -3,6 +3,12 @@ import helmet from "helmet";
 import morgan from "morgan";
 import authRouter from "./routes/auth.routes";
 import courtRouter from "./routes/court.routes";
+import bookingRouter from "./routes/booking.routes";
+const enableWorker = process.env.BOOKING_EXPIRE_WORKER === "true";
+if (enableWorker) {
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  require("./workers/booking-expire.worker");
+}
 import { responseMiddleware } from "./shared/response";
 import config from "./config/env";
 import prisma from "./shared/prisma";
@@ -16,6 +22,7 @@ app.use(responseMiddleware);
 
 app.use("/api/auth", authRouter);
 app.use("/api/courts", courtRouter);
+app.use("/api/bookings", bookingRouter);
 
 const port = config.port;
 

@@ -16,6 +16,14 @@ eq.ip and rate limiting work correctly.
 - auth_registration_success_total / auth_registration_failure_total / auth_registration_duration_ms
 - auth_login_success_total / auth_login_failure_total / auth_login_duration_ms
 - courts_available_search_total / courts_available_empty_total / courts_available_duration_ms
+- bookings_created_total / bookings_create_latency_ms / bookings_expired_total
+
+## Redis / BullMQ (Booking Expire Worker)
+- Requires `REDIS_URL` to be configured in `.env`.
+- Worker can run as a separate process: `npm run worker:booking-expire`.
+- App will load the worker only when `BOOKING_EXPIRE_WORKER=true`.
+- Jobs use delayed scheduling with exponential retry/backoff (see `backend/src/modules/bookings/services/create-booking.service.ts`).
+- If running multiple worker instances, ensure Redis is reachable and monitor queue health.
 
 ## Refresh Token Storage
 - Refresh tokens are hashed with bcrypt before being stored; never persist plaintext tokens.

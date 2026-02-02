@@ -59,5 +59,24 @@ export const availableCourtsDurationHistogram = new Histogram({
   registers: [metricsRegistry],
 });
 
+export const bookingsCreatedCounter = new Counter({
+  name: 'bookings_created_total',
+  help: 'Total successful booking creations',
+  registers: [metricsRegistry],
+});
+
+export const bookingsCreateDurationHistogram = new Histogram({
+  name: 'bookings_create_latency_ms',
+  help: 'Booking creation latency (milliseconds)',
+  buckets: [50, 100, 200, 400, 800, 1600, 3200],
+  registers: [metricsRegistry],
+});
+
+export const bookingsExpiredCounter = new Counter({
+  name: 'bookings_expired_total',
+  help: 'Total bookings expired',
+  registers: [metricsRegistry],
+});
+
 export const getMetricsSnapshot = (): Promise<string> =>
   metricsRegistry.metrics();

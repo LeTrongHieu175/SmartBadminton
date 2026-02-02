@@ -15,7 +15,7 @@ Task document: <task_file>.md
 Technical Design Document: <technical_design_document>.md
 Task: <task_identifier>
 ```
-Review the checklist for unfinished work first, and always ask for confirmation before starting implementation.
+Review the checklist for unfinished work first.
 
 2.  **Review the TDD and task:**
     *   Read the relevant sections of <technical_design_document>.md, focusing on:

@@ -10,6 +10,7 @@ export type AppConfig = {
   nodeEnv: string;
   port: number;
   databaseUrl: string;
+  redisUrl: string;
   logLevel: string;
   jwt: {
     access: JwtConfig;
@@ -23,9 +24,17 @@ export type AppConfig = {
     max: number;
     store?: 'memory' | 'redis';
   };
+  booking: {
+    expireMinutes: number;
+  };
 };
 
-const requiredVars = ['DATABASE_URL', 'ACCESS_TOKEN_TTL', 'REFRESH_TOKEN_TTL'];
+const requiredVars = [
+  'DATABASE_URL',
+  'ACCESS_TOKEN_TTL',
+  'REFRESH_TOKEN_TTL',
+  'REDIS_URL',
+];
 
 requiredVars.forEach((key) => {
   if (!process.env[key]) {
@@ -82,6 +91,7 @@ const config: AppConfig = {
   nodeEnv: process.env.NODE_ENV ?? 'development',
   port: toNumber(process.env.PORT, 3000),
   databaseUrl: process.env.DATABASE_URL as string,
+  redisUrl: process.env.REDIS_URL as string,
   logLevel: process.env.LOG_LEVEL ?? 'info',
   jwt: {
     access: {
@@ -105,6 +115,9 @@ const config: AppConfig = {
       process.env.RATE_LIMIT_STORE === 'redis'
         ? 'redis'
         : ('memory' as 'memory' | 'redis'),
+  },
+  booking: {
+    expireMinutes: toNumber(process.env.BOOKING_EXPIRE_MINUTES, 15),
   },
 };
 

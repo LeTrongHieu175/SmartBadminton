@@ -18,6 +18,8 @@ Create a `.env` file in `backend/` (copy from `.env.example` when available) and
 | `RATE_LIMIT_WINDOW_MS` | No (default `900000`) | Window length for rate limiter in milliseconds. |
 | `RATE_LIMIT_MAX` | No (default `5`) | Max requests per window per IP for registration endpoint. |
 | `RATE_LIMIT_STORE` | No (`memory`/`redis`) | Choose `redis` in production to share counters. |
+| `REDIS_URL` | Yes | Redis connection string for BullMQ queues. |
+| `BOOKING_EXPIRE_MINUTES` | No (default `15`) | Minutes before a pending booking expires. |
 
 > **Note:** Do not commit `.env` files. An `.env.example` template should contain non-secret placeholders.
 
